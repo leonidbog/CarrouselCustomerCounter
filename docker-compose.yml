@@ -1,0 +1,28 @@
+volumes:
+  carrousel_db:
+
+services:
+  app:
+    restart: always
+    environment:
+     SPRING_DATASOURCE_USERNAME: myuser
+     SPRING_DATASOURCE_PASSWORD: mypassword
+     SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres_db:5432/carrousel_db'
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: postgres
+    restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=carrousel_db
+    volumes:
+      - carrousel_db:/var/lib/postgresql/data
