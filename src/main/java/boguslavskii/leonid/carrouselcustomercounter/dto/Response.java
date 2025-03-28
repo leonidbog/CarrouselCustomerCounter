@@ -3,9 +3,11 @@ package boguslavskii.leonid.carrouselcustomercounter.dto;
 import boguslavskii.leonid.carrouselcustomercounter.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
@@ -19,5 +21,7 @@ public class Response {
     private String role;
     private String password;
     private User user;
+    private boolean success;
+    private Long recordId;
 
 }

@@ -22,12 +22,13 @@ public class UserAuthService {
 
 
     public Response signUp(Response requestResponse) {
-        Response newRequestResponse = new Response();
         if (userRepository.findByUsername(requestResponse.getUsername()).isPresent()) {
-            newRequestResponse.setError("Username already exists");
-            newRequestResponse.setStatusCode(400);
-            return newRequestResponse;
+            return Response.builder()
+                    .error("Username already exists")
+                    .statusCode(400)
+                    .build();
         }
+        Response.ResponseBuilder responseBuilder = Response.builder();
 
         try {
             User user = new User();
@@ -36,35 +37,36 @@ public class UserAuthService {
             user.setRoles(requestResponse.getRole());
             User savedAppUser = userRepository.save(user);
             if (savedAppUser != null && savedAppUser.getId() > 0) {
-                newRequestResponse.setUser(savedAppUser);
-                newRequestResponse.setMessage("Success");
-                newRequestResponse.setStatusCode(200);
+                responseBuilder.user(savedAppUser);
+                responseBuilder.message("Success");
+                responseBuilder.statusCode(200);
             }
         } catch (Exception e) {
-            newRequestResponse.setStatusCode(500);
-            newRequestResponse.setMessage(e.getMessage());
+            responseBuilder.statusCode(500);
+            responseBuilder.message(e.getMessage());
         }
-        return newRequestResponse;
+        return responseBuilder.build();
     }
 
     public Response login(Response signInRequest) {
-        Response response = new Response();
+        Response.ResponseBuilder response = Response.builder();
         try{
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(signInRequest
                             .getUsername(), signInRequest.getPassword()));
             var user = userRepository.findByUsername(signInRequest.getUsername());
             var jwt = jwtUtil.generateToken(new MyUserDetails(user.get()));
-            response.setStatusCode(200);
-            response.setMessage("Success");
-            response.setToken(jwt);
-            response.setExpirationTime("24");
+            response.statusCode(200);
+            response.message("Success");
+            response.role(user.get().getRoles());
+            response.token(jwt);
+            response.expirationTime("24");
 
         }catch (Exception e){
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
+            response.statusCode(500);
+            response.error(e.getMessage());
         }
-        return response;
+        return response.build();
     }
 
 

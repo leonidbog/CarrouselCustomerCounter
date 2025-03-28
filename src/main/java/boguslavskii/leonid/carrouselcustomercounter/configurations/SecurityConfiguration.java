@@ -30,9 +30,12 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("test/auth/hello").hasAuthority("USER")
-                            .requestMatchers("api/auth/**").permitAll()
-                            .requestMatchers("test/**").permitAll();
+                    auth.requestMatchers("/test/auth/hello").hasAuthority("USER")
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/records").hasAnyAuthority("USER", "ADMIN")
+                            .requestMatchers("/api/records/test").permitAll();
                 })
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

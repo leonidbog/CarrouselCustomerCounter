@@ -16,10 +16,11 @@ public class TestAuthenticatedController {
 
     @GetMapping("login")
     public Response login() {
-        Response response = new Response();
-        response.setStatusCode(200);
-        response.setMessage("Success");
-        return response;
+
+        return Response.builder()
+                .statusCode(200)
+                .message("Success")
+                .build();
     }
 
 
